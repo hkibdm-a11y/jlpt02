@@ -316,7 +316,7 @@
     </p>
     <div style="margin-bottom: 25px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
       <span class="badge badge-tag">題庫總數：25 題</span>
-      <span class="badge badge-count">單輪特訓：隨機 15 題</span>
+      <span class="badge badge-count">單輪特訓：隨機 8 題</span>
       <span class="badge badge-tag" style="background:#E2F0D9;color:#385723;">專屬錯題解說卡片</span>
     </div>
     <button class="btn" onclick="startGame()">開始特訓 🚀</button>
@@ -651,7 +651,7 @@ function shuffle(array) {
 
 function startGame() {
   // 從 25 題中隨機抽 15 題特訓
-  currentQuiz = shuffle(masterQuestionPool).slice(0, 15);
+  currentQuiz = shuffle(masterQuestionPool).slice(0, 8);
   currentIndex = 0;
   score = 0;
   wrongAnswers = [];
