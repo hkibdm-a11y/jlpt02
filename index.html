@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N1 精密特訓・櫻花弱點擊破 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-pink: #FFF5F7;
+    --card-bg: #FFFFFF;
+    --primary: #FF8BA7;
+    --primary-hover: #FF7597;
+    --accent-mint: #C5E3D8;
+    --accent-sky: #D6E4FF;
+    --accent-yellow: #FEF3BD;
+    --text-dark: #33272A;
+    --text-muted: #594A4E;
+    --correct: #59C9A5;
+    --wrong: #EF476F;
+    --shadow: 0 8px 24px rgba(255, 139, 167, 0.15);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-pink);
+    color: var(--text-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+      radial-gradient(#FFCCD5 1.5px, transparent 1.5px),
+      radial-gradient(#FFCCD5 1.5px, var(--bg-pink) 1.5px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+  }
+
+  .game-container {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 650px;
+    border-radius: 28px;
+    padding: 35px 30px;
+    box-shadow: var(--shadow);
+    border: 3px solid #FFE3E8;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 頂部裝飾圓圈 */
+  .game-container::before {
+    content: "🌸 🌸 🌸";
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .screen.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+
+  p.desc {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+
+  .btn {
+    background: var(--primary);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 14px 40px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(255, 139, 167, 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 139, 167, 0.5);
+  }
+
+  /* 遊戲頂部狀態列 */
+  .quiz-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .badge-tag {
+    background: var(--accent-yellow);
+    color: #8C7820;
+  }
+
+  .badge-count {
+    background: #F3F0F7;
+    color: #6C5B7B;
+  }
+
+  /* 進度條 */
+  .progress-wrap {
+    width: 100%;
+    height: 10px;
+    background: #F0E8EB;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #FFB7B2, var(--primary));
+    transition: width 0.3s ease;
+  }
+
+  /* 題目卡片 */
+  .question-card {
+    background: #FFF9FA;
+    border: 2px dashed #FFCCD5;
+    border-radius: 20px;
+    padding: 25px 20px;
+    width: 100%;
+    margin-bottom: 25px;
+  }
+
+  .question-text {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.5;
+  }
+
+  .question-text span.blank {
+    display: inline-block;
+    min-width: 90px;
+    border-bottom: 3px solid var(--primary);
+    color: var(--primary);
+    padding: 0 8px;
+  }
+
+  /* 二選一選項 */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+  }
+
+  .opt-btn {
+    background: white;
+    border: 2px solid #EAD8DC;
+    border-radius: 18px;
+    padding: 18px 12px;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--text-dark);
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    transition: all 0.15s ease;
+  }
+
+  .opt-btn:hover {
+    border-color: var(--primary);
+    background: #FFF5F7;
+    transform: translateY(-2px);
+  }
+
+  .opt-btn.correct {
+    background: var(--correct) !important;
+    border-color: var(--correct) !important;
+    color: white !important;
+  }
+
+  .opt-btn.wrong {
+    background: var(--wrong) !important;
+    border-color: var(--wrong) !important;
+    color: white !important;
+  }
+
+  /* 答題當下回饋 */
+  .feedback-banner {
+    margin-top: 18px;
+    font-size: 15px;
+    font-weight: 700;
+    min-height: 24px;
+  }
+
+  /* 結算頁面 */
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFB7B2, var(--primary));
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0 20px 0;
+    box-shadow: 0 6px 18px rgba(255, 139, 167, 0.4);
+  }
+
+  .score-circle span.num {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .score-circle span.label {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  .review-container {
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    margin: 15px 0 25px 0;
+    padding-right: 6px;
+    text-align: left;
+  }
+
+  .review-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .review-container::-webkit-scrollbar-thumb {
+    background: #FFCCD5;
+    border-radius: 6px;
+  }
+
+  .review-card {
+    background: #FFF9FA;
+    border-left: 4px solid var(--wrong);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    border-top: 1px solid #FFEAEF;
+    border-right: 1px solid #FFEAEF;
+    border-bottom: 1px solid #FFEAEF;
+  }
+
+  .review-title {
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+    font-size: 15px;
+  }
+
+  .review-ans {
+    color: var(--wrong);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .review-ans span {
+    color: var(--correct);
+  }
+
+  .review-note {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  
+  <!-- 起始畫面 -->
+  <div id="start-screen" class="screen active">
+    <h1>🌸 N1 弱點精密擊破</h1>
+    <p class="desc">
+      專為告別「憑感覺盲猜」與「死記語感」設計！<br>
+      精準鎖定<b>「動詞接續形態」</b>、<b>「邏輯天平二選一」</b><br>與<b>「長短音・清濁音拆彈」</b>核心題庫。
+    </p>
+    <div style="margin-bottom: 25px; display: flex; gap: 10px;">
+      <span class="badge badge-tag">全題庫隨機抽取</span>
+      <span class="badge badge-count">即時音效反饋</span>
+      <span class="badge badge-tag" style="background:#E2F0D9;color:#385723;">結算專屬解析</span>
+    </div>
+    <button class="btn" onclick="startGame()">開始特訓 🚀</button>
+  </div>
+
+  <!-- 測驗畫面 -->
+  <div id="quiz-screen" class="screen">
+    <div class="quiz-header">
+      <span id="q-category" class="badge badge-tag">漢字音變</span>
+      <span id="q-progress" class="badge badge-count">1 / 10</span>
+    </div>
+    
+    <div class="progress-wrap">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <div class="question-card">
+      <div id="q-text" class="question-text">題目載入中...</div>
+    </div>
+
+    <div class="options-grid" id="options-box">
+      <!-- 動態生成選項 -->
+    </div>
+
+    <div id="feedback-text" class="feedback-banner"></div>
+  </div>
+
+  <!-- 結算畫面 -->
+  <div id="result-screen" class="screen">
+    <h1>特訓結束 🎉</h1>
+    <div class="score-circle">
+      <span id="score-num" class="num">80</span>
+      <span class="label">正確率</span>
+    </div>
+    <p id="eval-text" style="font-weight: 700; color: var(--text-muted);"></p>
+
+    <div id="wrong-section" style="width: 100%; display: none;">
+      <h3 style="font-size: 16px; margin: 15px 0 8px 0; color: var(--wrong); text-align: left;">
+        📌 需徹底釐清的弱點解析：
+      </h3>
+      <div class="review-container" id="review-list">
+        <!-- 動態生成錯題解析卡片 -->
+      </div>
+    </div>
+
+    <button class="btn" style="margin-top: 15px;" onclick="startGame()">再挑戰一次 🌸</button>
+  </div>
+
+</div>
+
+<script>
+// Web Audio API 輕鬆可愛音效
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playBeep(isSuccess) {
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  if (isSuccess) {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+  } else {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+    osc.frequency.setValueAtTime(180, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.3);
+  }
+}
+
+// 針對該學生兩次測驗真實出錯、倒退之完整題庫
+const masterQuestionPool = [
+  // 1. 文法接續卡榫（特別鎖定 Q90 倒退與 Q84 對比）
+  {
+    category: "文法接續",
+    text: "チャイムが［ <span class='blank'>？</span> ］が早いか、生徒は飛び出した。",
+    opts: [
+      { text: "鳴る（辭書形）", isCorrect: true },
+      { text: "鳴った（た形）", isCorrect: false }
+    ],
+    explain: "「〜が早いか」接續極嚴格，必須接【動詞辭書形】！表示剛一...緊接著...。切勿與「〜たが最後」混淆。"
+  },
+  {
+    category: "文法接續",
+    text: "ネットに個人情報が流出［ <span class='blank'>？</span> ］が最後、削除は不可能だ。",
+    opts: [
+      { text: "した（た形）", isCorrect: true },
+      { text: "する（辭書形）", isCorrect: false }
+    ],
+    explain: "「〜たが最後」接續必須是【過去式た形】，表示一旦發生前事，必然招致萬劫不復的後果。"
+  },
+  {
+    category: "文法形態",
+    text: "恩師の遺志に対し、深い敬意を抱いて［ <span class='blank'>？</span> ］。",
+    opts: [
+      { text: "やみません", isCorrect: true },
+      { text: "やめません", isCorrect: false }
+    ],
+    explain: "源自文語動詞「止む（やむ）」，固定形態為「〜てやまない／やみません」（由衷不絕），絕非現代停止動詞「やめる」。"
+  },
+  // 2. 邏輯天平（鎖定 Q94/Q95 兩次全錯之對立句型）
+  {
+    category: "邏輯天平",
+    text: "重い怪我により、スポーツ［ <span class='blank'>？</span> ］簡単な歩行すら困難だ。",
+    opts: [
+      { text: "はおろか", isCorrect: true },
+      { text: "ならいざしらず", isCorrect: false }
+    ],
+    explain: "「AはおろかB」：A（高難度目標）不用說，就連更基本的B（すら/さえ）都做不到。"
+  },
+  {
+    category: "邏輯天平",
+    text: "小学生［ <span class='blank'>？</span> ］、社会人にもなって遅刻連絡もできないのは無責任だ。",
+    opts: [
+      { text: "ならいざしらず", isCorrect: true },
+      { text: "はおろか", isCorrect: false }
+    ],
+    explain: "「AならいざしらずB」：若是A（特殊/未成熟者）倒還情有可原，但身為B（具常識的成年人）絕不容許。"
+  },
+  // 3. 敬語主客方向
+  {
+    category: "敬語方向",
+    text: "弊社の出荷ミスによりご迷惑をおかけし、深く［ <span class='blank'>？</span> ］。",
+    opts: [
+      { text: "お詫び申し上げます", isCorrect: true },
+      { text: "お詫びいただきます", isCorrect: false }
+    ],
+    explain: "向客戶致歉為「己方行為」，需用自謙語「お＋動詞連用形＋申し上げる」。「お〜いただく」是請對方做，主客顛倒！"
+  },
+  // 4. 漢字長短音與音變（鎖定 Q3, Q11, Q13, Q14, Q15, Q17）
+  {
+    category: "長短音拆彈",
+    text: "この新製品は市場の［ 需要 ］が極めて高い。",
+    opts: [
+      { text: "じゅよう（短音）", isCorrect: true },
+      { text: "じゅうよう（長音）", isCorrect: false }
+    ],
+    explain: "「需」為短音「じゅ」（如需給 じゅきゅう）。「重要」才是長音「じゅうよう」，極高頻陷阱！"
+  },
+  {
+    category: "清濁音拆彈",
+    text: "歓喜と［ 興奮 ］に包まれた。",
+    opts: [
+      { text: "こうふん（清音）", isCorrect: true },
+      { text: "こうぶん（濁音）", isCorrect: false }
+    ],
+    explain: "「興」音讀長音「こう」；「奮」為清音「ふん」，切勿發成濁音「ぶん」。"
+  },
+  {
+    category: "字形音讀辨析",
+    text: "外箱の著しい［ 破損 ］が確認された。",
+    opts: [
+      { text: "はそん", isCorrect: true },
+      { text: "ひそん", isCorrect: false }
+    ],
+    explain: "「破」音讀為「は」（如破壊 はかい）。「ひ」是「被/非」的音讀，勿望形生音。"
+  },
+  {
+    category: "音讀辨析",
+    text: "関係各所から正式な［ 承諾 ］を得た。",
+    opts: [
+      { text: "しょうだく", isCorrect: true },
+      { text: "しゅうだく", isCorrect: false }
+    ],
+    explain: "「承」表示答應、認可時音讀為「しょう」（承認 しょうにん、承知 しょうち），不可記為「しゅう」。"
+  },
+  {
+    category: "吳音・漢音",
+    text: "個性を無視して［ 画一的 ］な指導を押し付けるな。",
+    opts: [
+      { text: "かくいつてき", isCorrect: true },
+      { text: "かくいちてき", isCorrect: false }
+    ],
+    explain: "「画一」中的「一」讀吳音「いつ」（如同統一 とういつ、唯一 ゆいいつ），不可讀漢音「いち」。"
+  },
+  {
+    category: "半濁音拆彈",
+    text: "書類に住民票の写しを［ 添付 ］する。",
+    opts: [
+      { text: "てんぷ（半濁）", isCorrect: true },
+      { text: "てんふ（清音）", isCorrect: false }
+    ],
+    explain: "「添付」因促音便讀半濁音「てんぷ」，不可選清音「てんふ」。"
+  },
+  // 5. 語彙極性與動詞辨析（鎖定 Q75 帶有 vs 具備）
+  {
+    category: "語彙搭配",
+    text: "試作の成功により、新企画が現実味を［ <span class='blank'>？</span> ］。",
+    opts: [
+      { text: "帯びてきた", isCorrect: true },
+      { text: "備えてきた", isCorrect: false }
+    ],
+    explain: "帶有某種性質、氣息固定搭配「帯びる」（現実味／熱／使命を帯びる）。「備える」用於配備功能或設施。"
+  }
+];
+
+let currentQuiz = [];
+let currentIndex = 0;
+let score = 0;
+let wrongAnswers = [];
+let isAnswering = false;
+
+// 洗牌函式
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startGame() {
+  // 隨機抽 10 題並打亂
+  currentQuiz = shuffle(masterQuestionPool).slice(0, 10);
+  currentIndex = 0;
+  score = 0;
+  wrongAnswers = [];
+  isAnswering = false;
+
+  document.getElementById('start-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.remove('active');
+  document.getElementById('quiz-screen').classList.add('active');
+
+  loadQuestion();
+}
+
+function loadQuestion() {
+  isAnswering = false;
+  const q = currentQuiz[currentIndex];
+  
+  // 更新狀態標籤
+  document.getElementById('q-category').textContent = q.category;
+  document.getElementById('q-progress').textContent = `${currentIndex + 1} / ${currentQuiz.length}`;
+  document.getElementById('progress-bar').style.width = `${((currentIndex) / currentQuiz.length) * 100}%`;
+  document.getElementById('feedback-text').textContent = "";
+  
+  // 更新題目文字
+  document.getElementById('q-text').innerHTML = q.text;
+
+  // 隨機打亂 2 個選項按鈕
+  const optsContainer = document.getElementById('options-box');
+  optsContainer.innerHTML = '';
+  const shuffledOpts = shuffle(q.opts);
+
+  shuffledOpts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt.text;
+    btn.onclick = () => handleAnswer(opt, btn);
+    optsContainer.appendChild(btn);
+  });
+}
+
+function handleAnswer(selectedOpt, btnElement) {
+  if (isAnswering) return;
+  isAnswering = true;
+
+  const q = currentQuiz[currentIndex];
+  const allBtns = document.querySelectorAll('.opt-btn');
+  const feedback = document.getElementById('feedback-text');
+
+  if (selectedOpt.isCorrect) {
+    score++;
+    btnElement.classList.add('correct');
+    feedback.style.color = "var(--correct)";
+    feedback.textContent = "🌸 正解！精準命中！";
+    playBeep(true);
+  } else {
+    btnElement.classList.add('wrong');
+    // 高亮正確者
+    allBtns.forEach(b => {
+      const target = q.opts.find(o => o.text === b.textContent);
+      if (target && target.isCorrect) b.classList.add('correct');
+    });
+    feedback.style.color = "var(--wrong)";
+    feedback.textContent = "💡 盲點觸發！請看解析";
+    playBeep(false);
+
+    // 紀錄錯題
+    wrongAnswers.push({
+      question: q.text.replace(/<[^>]*>?/gm, ''),
+      selected: selectedOpt.text,
+      correct: q.opts.find(o => o.isCorrect).text,
+      explain: q.explain
+    });
+  }
+
+  // 1.1 秒後進入下一題
+  setTimeout(() => {
+    currentIndex++;
+    if (currentIndex < currentQuiz.length) {
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  }, 1100);
+}
+
+function showResult() {
+  document.getElementById('quiz-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.add('active');
+
+  const accuracy = Math.round((score / currentQuiz.length) * 100);
+  document.getElementById('score-num').textContent = `${accuracy}%`;
+
+  const evalText = document.getElementById('eval-text');
+  if (accuracy === 100) {
+    evalText.textContent = "完美！接續與音變卡榫已完全內化！🌸";
+  } else if (accuracy >= 80) {
+    evalText.textContent = "非常好！只剩零星接續死角，複習一下解析吧！💪";
+  } else {
+    evalText.textContent = "發現關鍵盲點！請仔細閱讀下方解析卡片重整觀念 ✨";
+  }
+
+  const wrongSec = document.getElementById('wrong-section');
+  const reviewList = document.getElementById('review-list');
+  reviewList.innerHTML = '';
+
+  if (wrongAnswers.length > 0) {
+    wrongSec.style.display = 'block';
+    wrongAnswers.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <div class="review-title">📌 ${item.question}</div>
+        <div class="review-ans">你的作答：${item.selected} ➔ <span>正確：${item.correct}</span></div>
+        <div class="review-note">${item.explain}</div>
+      `;
+      reviewList.appendChild(card);
+    });
+  } else {
+    wrongSec.style.display = 'none';
+  }
+}
+</script>
+
+</body>
+</html>
