@@ -46,7 +46,7 @@
   .game-container {
     background: var(--card-bg);
     width: 100%;
-    max-width: 650px;
+    max-width: 680px;
     border-radius: 28px;
     padding: 35px 30px;
     box-shadow: var(--shadow);
@@ -55,7 +55,6 @@
     overflow: hidden;
   }
 
-  /* 頂部裝飾圓圈 */
   .game-container::before {
     content: "🌸 🌸 🌸";
     position: absolute;
@@ -115,7 +114,6 @@
     box-shadow: 0 8px 20px rgba(255, 139, 167, 0.5);
   }
 
-  /* 遊戲頂部狀態列 */
   .quiz-header {
     width: 100%;
     display: flex;
@@ -141,7 +139,6 @@
     color: #6C5B7B;
   }
 
-  /* 進度條 */
   .progress-wrap {
     width: 100%;
     height: 10px;
@@ -158,7 +155,6 @@
     transition: width 0.3s ease;
   }
 
-  /* 題目卡片 */
   .question-card {
     background: #FFF9FA;
     border: 2px dashed #FFCCD5;
@@ -169,7 +165,7 @@
   }
 
   .question-text {
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 800;
     color: var(--text-dark);
     line-height: 1.5;
@@ -177,13 +173,12 @@
 
   .question-text span.blank {
     display: inline-block;
-    min-width: 90px;
+    min-width: 80px;
     border-bottom: 3px solid var(--primary);
     color: var(--primary);
     padding: 0 8px;
   }
 
-  /* 二選一選項 */
   .options-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -195,8 +190,8 @@
     background: white;
     border: 2px solid #EAD8DC;
     border-radius: 18px;
-    padding: 18px 12px;
-    font-size: 19px;
+    padding: 16px 12px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-dark);
     cursor: pointer;
@@ -222,7 +217,6 @@
     color: white !important;
   }
 
-  /* 答題當下回饋 */
   .feedback-banner {
     margin-top: 18px;
     font-size: 15px;
@@ -230,7 +224,6 @@
     min-height: 24px;
   }
 
-  /* 結算頁面 */
   .score-circle {
     width: 120px;
     height: 120px;
@@ -259,7 +252,7 @@
 
   .review-container {
     width: 100%;
-    max-height: 280px;
+    max-height: 320px;
     overflow-y: auto;
     margin: 15px 0 25px 0;
     padding-right: 6px;
@@ -316,15 +309,15 @@
   
   <!-- 起始畫面 -->
   <div id="start-screen" class="screen active">
-    <h1>🌸 N1 弱點精密擊破</h1>
+    <h1>🌸 N1 弱點精密擊破（25題擴充版）</h1>
     <p class="desc">
-      專為告別「憑感覺盲猜」與「死記語感」設計！<br>
-      精準鎖定<b>「動詞接續形態」</b>、<b>「邏輯天平二選一」</b><br>與<b>「長短音・清濁音拆彈」</b>核心題庫。
+      涵蓋 T01 & T02 測驗中所有的<b>「倒退題」</b>、<b>「接續形態陷阱」</b>、<br>
+      <b>「極性倒置」</b>及<b>「長短音/清濁音」</b>完整弱點庫！
     </p>
-    <div style="margin-bottom: 25px; display: flex; gap: 10px;">
-      <span class="badge badge-tag">全題庫隨機抽取</span>
-      <span class="badge badge-count">即時音效反饋</span>
-      <span class="badge badge-tag" style="background:#E2F0D9;color:#385723;">結算專屬解析</span>
+    <div style="margin-bottom: 25px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+      <span class="badge badge-tag">題庫總數：25 題</span>
+      <span class="badge badge-count">單輪特訓：隨機 15 題</span>
+      <span class="badge badge-tag" style="background:#E2F0D9;color:#385723;">專屬錯題解說卡片</span>
     </div>
     <button class="btn" onclick="startGame()">開始特訓 🚀</button>
   </div>
@@ -332,8 +325,8 @@
   <!-- 測驗畫面 -->
   <div id="quiz-screen" class="screen">
     <div class="quiz-header">
-      <span id="q-category" class="badge badge-tag">漢字音變</span>
-      <span id="q-progress" class="badge badge-count">1 / 10</span>
+      <span id="q-category" class="badge badge-tag">分類標籤</span>
+      <span id="q-progress" class="badge badge-count">1 / 15</span>
     </div>
     
     <div class="progress-wrap">
@@ -345,7 +338,7 @@
     </div>
 
     <div class="options-grid" id="options-box">
-      <!-- 動態生成選項 -->
+      <!-- 動態選項 -->
     </div>
 
     <div id="feedback-text" class="feedback-banner"></div>
@@ -365,7 +358,7 @@
         📌 需徹底釐清的弱點解析：
       </h3>
       <div class="review-container" id="review-list">
-        <!-- 動態生成錯題解析卡片 -->
+        <!-- 動態錯題解析 -->
       </div>
     </div>
 
@@ -375,7 +368,7 @@
 </div>
 
 <script>
-// Web Audio API 輕鬆可愛音效
+// Web Audio API
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playBeep(isSuccess) {
   if (audioCtx.state === 'suspended') {
@@ -405,68 +398,105 @@ function playBeep(isSuccess) {
   }
 }
 
-// 針對該學生兩次測驗真實出錯、倒退之完整題庫
+// 包含 T01 & T02 核心弱點的完整 25 題庫
 const masterQuestionPool = [
-  // 1. 文法接續卡榫（特別鎖定 Q90 倒退與 Q84 對比）
+  // ── 文法接續卡榫 ──
   {
-    category: "文法接續",
-    text: "チャイムが［ <span class='blank'>？</span> ］が早いか、生徒は飛び出した。",
+    category: "文法接續 (T02倒退題)",
+    text: "終業チャイムが［ <span class='blank'>？</span> ］が早いか、教室を飛び出した。",
     opts: [
       { text: "鳴る（辭書形）", isCorrect: true },
       { text: "鳴った（た形）", isCorrect: false }
     ],
-    explain: "「〜が早いか」接續極嚴格，必須接【動詞辭書形】！表示剛一...緊接著...。切勿與「〜たが最後」混淆。"
+    explain: "「〜が早いか」接續極嚴格，必須接【動詞辭書形】！表示剛一...緊接著...。切勿接過去式「鳴った」。"
   },
   {
-    category: "文法接續",
+    category: "文法接續 (接續對比)",
     text: "ネットに個人情報が流出［ <span class='blank'>？</span> ］が最後、削除は不可能だ。",
     opts: [
       { text: "した（た形）", isCorrect: true },
       { text: "する（辭書形）", isCorrect: false }
     ],
-    explain: "「〜たが最後」接續必須是【過去式た形】，表示一旦發生前事，必然招致萬劫不復的後果。"
+    explain: "「〜たが最後」接續必須是【過去式た形】，表示一旦發生前事，必定導致不可挽回之後果。"
   },
   {
-    category: "文法形態",
+    category: "文法形態 (T01/T02連續錯)",
     text: "恩師の遺志に対し、深い敬意を抱いて［ <span class='blank'>？</span> ］。",
     opts: [
       { text: "やみません", isCorrect: true },
       { text: "やめません", isCorrect: false }
     ],
-    explain: "源自文語動詞「止む（やむ）」，固定形態為「〜てやまない／やみません」（由衷不絕），絕非現代停止動詞「やめる」。"
+    explain: "源自文語動詞「止む（やむ）」，感情持續不絕固定為「〜てやまない／やみません」，絕非現代停止動詞「やめる」。"
   },
-  // 2. 邏輯天平（鎖定 Q94/Q95 兩次全錯之對立句型）
   {
-    category: "邏輯天平",
-    text: "重い怪我により、スポーツ［ <span class='blank'>？</span> ］簡単な歩行すら困難だ。",
+    category: "連體修飾 (T01弱點)",
+    text: "朝霧の静寂の中、鏡［ <span class='blank'>？</span> ］静謐な湖面に朝日が差した。",
     opts: [
-      { text: "はおろか", isCorrect: true },
-      { text: "ならいざしらず", isCorrect: false }
+      { text: "のごとき（修飾名詞）", isCorrect: true },
+      { text: "のごとく（修飾動詞）", isCorrect: false }
     ],
-    explain: "「AはおろかB」：A（高難度目標）不用說，就連更基本的B（すら/さえ）都做不到。"
+    explain: "後方接名詞「静謐な湖面」，文語比喻連體形必須使用「のごとき」（相當於 のような）。"
   },
   {
-    category: "邏輯天平",
-    text: "小学生［ <span class='blank'>？</span> ］、社会人にもなって遅刻連絡もできないのは無責任だ。",
+    category: "文法呼應 (T01弱點)",
+    text: "室内の蒸し暑さといったら［ <span class='blank'>？</span> ］。",
     opts: [
-      { text: "ならいざしらず", isCorrect: true },
-      { text: "はおろか", isCorrect: false }
+      { text: "なかった", isCorrect: true },
+      { text: "あった", isCorrect: false }
     ],
-    explain: "「AならいざしらずB」：若是A（特殊/未成熟者）倒還情有可原，但身為B（具常識的成年人）絕不容許。"
+    explain: "程度極端難以言表慣用句為「〜といったら（ありはし）ない」，過去時態必呼應「なかった」。"
   },
-  // 3. 敬語主客方向
   {
-    category: "敬語方向",
+    category: "逆接呼應 (T01弱點)",
+    text: "いかに卓越した職人［ <span class='blank'>？</span> ］、手入れを怠れば良い物は作れない。",
+    opts: [
+      { text: "といえども", isCorrect: true },
+      { text: "といっても", isCorrect: false }
+    ],
+    explain: "與句首「いかに〜」成套呼應的硬性逆接讓步句型為「いかに...名詞＋といえども」（即使身為...亦不例外）。"
+  },
+  {
+    category: "敬語方向 (T01混淆)",
     text: "弊社の出荷ミスによりご迷惑をおかけし、深く［ <span class='blank'>？</span> ］。",
     opts: [
       { text: "お詫び申し上げます", isCorrect: true },
       { text: "お詫びいただきます", isCorrect: false }
     ],
-    explain: "向客戶致歉為「己方行為」，需用自謙語「お＋動詞連用形＋申し上げる」。「お〜いただく」是請對方做，主客顛倒！"
+    explain: "向客戶致歉為己方動作，必須用自謙語「お＋動詞連用形＋申し上げる」。「お〜いただく」為要求對方，主客顛倒。"
   },
-  // 4. 漢字長短音與音變（鎖定 Q3, Q11, Q13, Q14, Q15, Q17）
+
+  // ── 邏輯天平二選一 ──
   {
-    category: "長短音拆彈",
+    category: "邏輯天平 (T01/T02連續錯)",
+    text: "重い怪我により、スポーツ［ <span class='blank'>？</span> ］簡単な歩行すら困難だ。",
+    opts: [
+      { text: "はおろか", isCorrect: true },
+      { text: "ならいざしらず", isCorrect: false }
+    ],
+    explain: "「AはおろかB」：A（高難度目標）不用說，連更基本的B（すら/さえ）都做不到。"
+  },
+  {
+    category: "邏輯天平 (T01/T02連續錯)",
+    text: "小学生［ <span class='blank'>？</span> ］、社会人にもなって遅刻連絡もできないのは無責任だ。",
+    opts: [
+      { text: "ならいざしらず", isCorrect: true },
+      { text: "はおろか", isCorrect: false }
+    ],
+    explain: "「AならいざしらずB」：若是A（特殊/未成熟者）倒還罷了，但換作B（成年社會人）絕不容許。"
+  },
+  {
+    category: "極性天平 (T01弱點)",
+    text: "円安の進行に［ <span class='blank'>？</span> ］をかけるため、為替介入を実施した。",
+    opts: [
+      { text: "歯止め（踩煞車遏制）", isCorrect: true },
+      { text: "拍車（加速惡化）", isCorrect: false }
+    ],
+    explain: "遏制事態惡化踩煞車為「歯止めをかける」；使惡化加速升級為「拍車をかける」，極性相反！"
+  },
+
+  // ── 漢字音變拆彈 ──
+  {
+    category: "長短音拆彈 (T02倒退題)",
     text: "この新製品は市場の［ 需要 ］が極めて高い。",
     opts: [
       { text: "じゅよう（短音）", isCorrect: true },
@@ -475,59 +505,132 @@ const masterQuestionPool = [
     explain: "「需」為短音「じゅ」（如需給 じゅきゅう）。「重要」才是長音「じゅうよう」，極高頻陷阱！"
   },
   {
-    category: "清濁音拆彈",
-    text: "歓喜と［ 興奮 ］に包まれた。",
-    opts: [
-      { text: "こうふん（清音）", isCorrect: true },
-      { text: "こうぶん（濁音）", isCorrect: false }
-    ],
-    explain: "「興」音讀長音「こう」；「奮」為清音「ふん」，切勿發成濁音「ぶん」。"
-  },
-  {
-    category: "字形音讀辨析",
-    text: "外箱の著しい［ 破損 ］が確認された。",
+    category: "字形音讀 (T02倒退題)",
+    text: "運送中に外箱の著しい［ 破損 ］が確認された。",
     opts: [
       { text: "はそん", isCorrect: true },
       { text: "ひそん", isCorrect: false }
     ],
-    explain: "「破」音讀為「は」（如破壊 はかい）。「ひ」是「被/非」的音讀，勿望形生音。"
+    explain: "「破」音讀為「は」（破壊 はかい、破産 はさん）。「ひ」是「被/非」的音讀，勿望形生音。"
   },
   {
-    category: "音讀辨析",
-    text: "関係各所から正式な［ 承諾 ］を得た。",
+    category: "音讀辨析 (T02倒退題)",
+    text: "関係各所から正式な［ 承諾 ］を得ている。",
     opts: [
       { text: "しょうだく", isCorrect: true },
       { text: "しゅうだく", isCorrect: false }
     ],
-    explain: "「承」表示答應、認可時音讀為「しょう」（承認 しょうにん、承知 しょうち），不可記為「しゅう」。"
+    explain: "「承」表示認可時音讀為「しょう」（承知 しょうち、承認 しょうにん），切勿誤記為「しゅう」。"
   },
   {
-    category: "吳音・漢音",
+    category: "吳音・漢音 (T02倒退題)",
     text: "個性を無視して［ 画一的 ］な指導を押し付けるな。",
     opts: [
-      { text: "かくいつてき", isCorrect: true },
-      { text: "かくいちてき", isCorrect: false }
+      { text: "かくいつてき（吳音）", isCorrect: true },
+      { text: "かくいちてき（漢音）", isCorrect: false }
     ],
     explain: "「画一」中的「一」讀吳音「いつ」（如同統一 とういつ、唯一 ゆいいつ），不可讀漢音「いち」。"
   },
   {
-    category: "半濁音拆彈",
-    text: "書類に住民票の写しを［ 添付 ］する。",
+    category: "清濁音拆彈 (T01/T02連續錯)",
+    text: "観客は歓喜と［ 興奮 ］に包まれた。",
+    opts: [
+      { text: "こうふん（清音）", isCorrect: true },
+      { text: "こうぶん（濁音）", isCorrect: false }
+    ],
+    explain: "「興」音讀長音「こう」；「奮」為清音「ふん」，不可讀濁音「ぶん」。「きょう」用於興味。"
+  },
+  {
+    category: "半濁促音 (T01錯題)",
+    text: "申請書類に住民票の写しを［ 添付 ］する。",
     opts: [
       { text: "てんぷ（半濁）", isCorrect: true },
       { text: "てんふ（清音）", isCorrect: false }
     ],
-    explain: "「添付」因促音便讀半濁音「てんぷ」，不可選清音「てんふ」。"
+    explain: "「添付」因促音便讀半濁音「てんぷ」，不可選清音「てんふ」或「てんほう」。"
   },
-  // 5. 語彙極性與動詞辨析（鎖定 Q75 帶有 vs 具備）
   {
-    category: "語彙搭配",
-    text: "試作の成功により、新企画が現実味を［ <span class='blank'>？</span> ］。",
+    category: "訓讀辨析 (T01/T02錯題)",
+    text: "多くの部下から父親のように［ 慕われて ］いる。",
+    opts: [
+      { text: "したわれて", isCorrect: true },
+      { text: "うやまわれて", isCorrect: false }
+    ],
+    explain: "「慕う」訓讀為「したう」（敬仰、愛戴）。「敬う」才是「うやまう」。"
+  },
+  {
+    category: "訓讀辨析 (T01/T02錯題)",
+    text: "天文学者が学会で［ 唱えた ］仮説。",
+    opts: [
+      { text: "となえた", isCorrect: true },
+      { text: "うったえた", isCorrect: false }
+    ],
+    explain: "「唱える」訓讀為「となえる」（提倡、主張學說）。「訴える」讀作「うったえる」。"
+  },
+  {
+    category: "音訓複合 (T01/T02錯題)",
+    text: "彼の努力は大いなる称賛に［ 値する ］。",
+    opts: [
+      { text: "あたいする（訓讀）", isCorrect: true },
+      { text: "かちする（音讀誤用）", isCorrect: false }
+    ],
+    explain: "作為接尾動詞固定讀訓讀「あたいする」（值得...）。音讀「ち」僅用於「価値（かち）」。"
+  },
+  {
+    category: "連濁辨析 (T01錯題)",
+    text: "台所の［ 戸棚 ］の奥から缶詰が見つかった。",
+    opts: [
+      { text: "とだな（連濁）", isCorrect: true },
+      { text: "とたな（清音）", isCorrect: false }
+    ],
+    explain: "複合名詞中「棚（たな）」發生連濁變為「だな」，整詞讀作「とだな」。"
+  },
+
+  // ── 語彙用法與搭配 ──
+  {
+    category: "語彙用法 (T01/T02錯題)",
+    text: "新企画が試作成功により［ 現実味 ］を［ <span class='blank'>？</span> ］。",
     opts: [
       { text: "帯びてきた", isCorrect: true },
       { text: "備えてきた", isCorrect: false }
     ],
-    explain: "帶有某種性質、氣息固定搭配「帯びる」（現実味／熱／使命を帯びる）。「備える」用於配備功能或設施。"
+    explain: "帶有某種性質、氣息固定搭配「帯びる」（現実味／熱／使命を帯びる）。「備える」用於配備功能。"
+  },
+  {
+    category: "語彙用法 (T01錯題)",
+    text: "契約書の最終確認で、重大な記載ミスを完全に［ <span class='blank'>？</span> ］。",
+    opts: [
+      { text: "見落としていた", isCorrect: true },
+      { text: "見逃していた", isCorrect: false }
+    ],
+    explain: "疏忽看漏錯誤、瑕疵專用「見落とす」。「見逃す」是用於寬容放過或錯過機會。"
+  },
+  {
+    category: "語彙用法 (T01錯題)",
+    text: "長年続けてきた組織の悪習は、［ <span class='blank'>？</span> ］廃止を求められても難しい。",
+    opts: [
+      { text: "今更（事到如今為時已晚）", isCorrect: true },
+      { text: "未だに（至今仍然）", isCorrect: false }
+    ],
+    explain: "「今更」專指事態演變至今「為時已晚，即使做也徒勞」，後多接反語或無可奈何。"
+  },
+  {
+    category: "語彙用法 (T01錯題)",
+    text: "紛失書類を探すため、キャビネットを［ <span class='blank'>？</span> ］探した。",
+    opts: [
+      { text: "くまなく（到處無死角）", isCorrect: true },
+      { text: "ことごとく（全體無一例外）", isCorrect: false }
+    ],
+    explain: "空間上不放過任何角落搜尋專用「くまなく」（隅々まで）。「ことごとく」表示全盤/全部。"
+  },
+  {
+    category: "語彙近義極性 (T01錯題)",
+    text: "どこにでもあるような［ ありふれた ］アイデア。",
+    opts: [
+      { text: "平凡で珍しくない", isCorrect: true },
+      { text: "時代遅れの古い", isCorrect: false }
+    ],
+    explain: "「ありふれた」指隨處可見、司空見慣、平凡無奇（平凡な/月並みな）。並非過時老舊。"
   }
 ];
 
@@ -537,7 +640,6 @@ let score = 0;
 let wrongAnswers = [];
 let isAnswering = false;
 
-// 洗牌函式
 function shuffle(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -548,8 +650,8 @@ function shuffle(array) {
 }
 
 function startGame() {
-  // 隨機抽 10 題並打亂
-  currentQuiz = shuffle(masterQuestionPool).slice(0, 10);
+  // 從 25 題中隨機抽 15 題特訓
+  currentQuiz = shuffle(masterQuestionPool).slice(0, 15);
   currentIndex = 0;
   score = 0;
   wrongAnswers = [];
@@ -566,16 +668,13 @@ function loadQuestion() {
   isAnswering = false;
   const q = currentQuiz[currentIndex];
   
-  // 更新狀態標籤
   document.getElementById('q-category').textContent = q.category;
   document.getElementById('q-progress').textContent = `${currentIndex + 1} / ${currentQuiz.length}`;
   document.getElementById('progress-bar').style.width = `${((currentIndex) / currentQuiz.length) * 100}%`;
   document.getElementById('feedback-text').textContent = "";
   
-  // 更新題目文字
   document.getElementById('q-text').innerHTML = q.text;
 
-  // 隨機打亂 2 個選項按鈕
   const optsContainer = document.getElementById('options-box');
   optsContainer.innerHTML = '';
   const shuffledOpts = shuffle(q.opts);
@@ -601,20 +700,18 @@ function handleAnswer(selectedOpt, btnElement) {
     score++;
     btnElement.classList.add('correct');
     feedback.style.color = "var(--correct)";
-    feedback.textContent = "🌸 正解！精準命中！";
+    feedback.textContent = "🌸 正解！精準卡榫！";
     playBeep(true);
   } else {
     btnElement.classList.add('wrong');
-    // 高亮正確者
     allBtns.forEach(b => {
       const target = q.opts.find(o => o.text === b.textContent);
       if (target && target.isCorrect) b.classList.add('correct');
     });
     feedback.style.color = "var(--wrong)";
-    feedback.textContent = "💡 盲點觸發！請看解析";
+    feedback.textContent = "💡 盲點！請記住下方解析";
     playBeep(false);
 
-    // 紀錄錯題
     wrongAnswers.push({
       question: q.text.replace(/<[^>]*>?/gm, ''),
       selected: selectedOpt.text,
@@ -623,7 +720,6 @@ function handleAnswer(selectedOpt, btnElement) {
     });
   }
 
-  // 1.1 秒後進入下一題
   setTimeout(() => {
     currentIndex++;
     if (currentIndex < currentQuiz.length) {
@@ -643,11 +739,11 @@ function showResult() {
 
   const evalText = document.getElementById('eval-text');
   if (accuracy === 100) {
-    evalText.textContent = "完美！接續與音變卡榫已完全內化！🌸";
+    evalText.textContent = "完美！所有語法接續與音變卡榫完全通透！🌸";
   } else if (accuracy >= 80) {
-    evalText.textContent = "非常好！只剩零星接續死角，複習一下解析吧！💪";
+    evalText.textContent = "優秀！只剩極少數零星死角，細讀解析鞏固記憶！💪";
   } else {
-    evalText.textContent = "發現關鍵盲點！請仔細閱讀下方解析卡片重整觀念 ✨";
+    evalText.textContent = "抓出關鍵盲點！務必查看下方專屬卡片，不要死背！✨";
   }
 
   const wrongSec = document.getElementById('wrong-section');
@@ -661,7 +757,7 @@ function showResult() {
       card.className = 'review-card';
       card.innerHTML = `
         <div class="review-title">📌 ${item.question}</div>
-        <div class="review-ans">你的作答：${item.selected} ➔ <span>正確：${item.correct}</span></div>
+        <div class="review-ans">你的作答：${item.selected} ➔ <span>正確解答：${item.correct}</span></div>
         <div class="review-note">${item.explain}</div>
       `;
       reviewList.appendChild(card);
